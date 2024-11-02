@@ -1,0 +1,429 @@
+export default {
+  data() {
+    return {
+      sports: [
+        'Baseball',
+        'Football',
+        'Volleyball',
+        'Swimming',
+      ],
+    }
+  }
+}
+=> 변수 설정
+
+
+⭐Text interpolation : 저장한 변수를 사용 / 내부에 함수 사용 및 js코드 삽입 가능
+-> {{ channel }}
+
+⭐변수로써 사용
+<p v-html(or v-text)="channel"></p>
+v-text : 문자를 그대로 => "<b>왕초보 홈페이지 만들기</b>"
+v-html : 문자 내 태그를 활용 => "왕초보 홈페이지 만들기"
+v-pre : 줄넘김까지 전부 문자열 그래도 사용 => {{ channel }} 출력
+v-if : 값의 참 불 값에 따라서 출력 여부 결정 (제거)
+=>  v-else-if / v-else
+v-show : 값의 참 불 값에 따라서 출력 여부 결정 (dispaly : none)
+
+⭐반복문
+<li v-for="(sport, index) in sports">{{ index + 1 }}  {{ sport }}</li> => sports: ['Baseball','Football','Volleyball','Swimming',]
+
+⭐디렉티브
+벤트를 활성화 시켜주는 기능 => button onclick과 같은 느낌
+<button v-on:click="count++">숫자 증가</button>
+<button v-on:click="count--">숫자 감소</button>
+<button v-on:mouseover="count=0">0으로 초기화</button>
+
+⭐Method 옵션
+data() {
+  return {num: 0}
+},
+methods: {
+  increment() {this.num++ },
+  decrement() { this.num--}
+}
+<button v-on:click="increment">Increase Num</button>
+<button v-on:click="decrement">Decrease Num</button>
+
+⭐v-On Modifier
+method => getkey(e) { alert('alt-s를 누르셧습니다.') } => e는 이벤트
+<button v-on:click.once="createAlert">클릭</button> => once : 한번만 실행
+<input type="text" v-on:keydown.alt.s="getkey"><br> => .enter .tab .delete .esc .space .up .down .left .right .center
+data() {
+	return {
+		x: 0,
+		y: 0,
+		msg: '',
+	}
+},
+methods: {
+	mousePos(e) {
+		this.x= e.offsetX
+		this.y= e.offsetY
+	},
+	mouseClick(e) {
+		// e.preventDefault()
+		this.msg += this.x + ', ' + this.y + "\n"
+	}
+}
+div id="display" v-on:mousemove="mousePos" v-on:click.right.prevent="mouseClick">
+	x: {{ x }} <br>
+	y: {{ y }}
+</div>
+<textarea readonly>{{msg}}</textarea>
+
+** v-on:click => @으로 축약 가능 => @click
+
+⭐양방향 바인딩하는 v-model 디렉티브
+<input type="text" v-model="inputName">
+<p>{{  inputName }}</p>
+=> 변수와 input값 서로 연결
+예제1 => agree = false
+<p>이 약관에 동의하십니까?</p>
+<input type="checkbox" v-model="agree"><br>
+{{ agree }}
+<button v-show="agree">가입하기</button>
+
+예제 2 => Buy List
+export default { 
+  data() {
+    return {
+      itemName : null,
+      itemCnt : 1,
+      sList : [
+        {name : '감귤', cnt : 2},
+      ]
+    }
+  },
+  methods: {
+    addItem() {
+      let item = {
+        name: this.itemName,
+        cnt : this.itemCnt
+      }
+      this.sList.push(item)
+      this.itemName = null
+      this.itemCnt = 1
+    }
+  }
+}
+</script>
+<template>
+  <form v-on:submit.prevent="addItem">
+    <p>품목 : <input type="text" required v-model="itemName"></p>
+    <p>수량 : <select v-model="itemCnt">
+      <option value="1">1개</option>
+      <option value="2">2개</option>
+      <option value="3">3개</option>
+      <option value="4">4개</option>
+      <option value="5">5개</option>
+    </select></p>
+    <button>상품추가</button>
+  </form>
+  <p>구입할 품목 : </p>
+  <ul>
+    <li v-for="item in sList">{{ item.name }} / {{ item.cnt }}개</li>
+  </ul>
+</template>
+
+⭐Dom 요소의 속성을 동적으로 변경하는 v-bind 디렉티브
+<a :href="url">{{ site_name }}</a>
+<img :src="src" alt="">
+=> 이와 같이 "" 안에 변수를 적을 때 사용
+=> Tag property의 경우 사용
+<script>
+export default { 
+  data() {
+    return {
+      flag : false,
+      site_name : 'Daum',
+      url : 'https://daum.net',
+      src : 'https://res.sooplive.co.kr/images/svg/soop_logo_dark.svg'
+    }
+  },
+  methods: {
+    clickAr() {
+      if (this.flag == false) {
+        this.site_name = 'Daum',
+        this.url = 'https://daum.net'
+        this.flag = true
+      } else {
+        this.site_name = 'Naver',
+        this.url = 'https://naver.com'
+        this.flag = false
+      }
+    }
+  }
+}
+</script>
+<template>
+  <a :href="url">{{ site_name }}</a>
+  <img :src="src" alt=""><br>
+  <button @click="clickAr">{{site_name}}</button>
+</template>
+
+⭐Class 바인딩
+classObj: { bg:true, 'text-danger': true }
+bgClass : 'bg',
+erClass : 'text-danger',
+isActive : false
+
+- 하이푼 (-)이 존재한다면 ''안에 넣어줘야 된다.
+<div class="border" :class="{bg: isActive, 'text-danger': hasError}">Warning</div>
+<div class="border" :class="[isActive ? bgClass : '', erClass]">Warning</div>
+
+⭐Style 바인딩
+data() {
+	return {mw : 10}
+},
+methods: {
+	incWidth() {this.mw += 10},
+	iniWidth() {this.mw = 10}
+}
+<div class="demo" :style="{width: mw + 'px', height: '500px'}" @mouseover="iniWidth"></div>
+<button @click="incWidth">버튼을 클릭해보세요</button>
+
+⭐computed 계산된 속성
+1. Caching => 결과를 보관하여 재계산 없이 확인 가능
+2. Reactive => 종속된 값 변화시 재계산
+3. 읽기 전용이지만 gettter/ setter를 이용하여 R/W 가능
+computed: {
+	yesNo() {
+		if (this.chk) {
+			return '예'
+		} else {
+			return '아니요'
+		}
+	}
+}
+==> 동일한 값을 여러번 사용할 때 한번의 계산으로 해결이 가능하다 => 트래픽 감소
+<input type="checkbox" v-model="chk"> {{ yesNo }} {{ yesNo }} {{ yesNo }}
+
+<script>
+export default {
+  data() {
+    return {
+      firstName : 'John',
+      lastName: 'Doe',
+    };
+  },
+  computed: {
+    fullName: {
+      get() {
+        return this.firstName + ' ' + this.lastName;
+      },
+      set(newValue) {
+        const names = newValue.split(' ');
+        this.firstName = names[0];
+        this.lastName = names[names.length - 1];
+      }
+    }
+  }
+}
+</script>
+<template>
+  <div>
+    <p>Full Name: {{ fullName }}</p>
+    <input v-model="fullName" placeholder="Enter full name"> <br>
+
+    firstName : {{ firstName }} <br>
+    lastName : {{ lastName }}
+  </div>
+</template>
+
+⭐watcher
+반응형 속성이 변경될 때마다 함수를 트리거 할 수 있다
+=> 변수와 같은 함수명
+<script>
+export default {
+  data() {
+    return {
+      count : 0,
+      y: '짝수'
+    }
+  },
+  methods: {
+    Increment() {
+      this.count++
+    }
+  },
+  watch: {
+    count: {
+      handler(newVal, oldVal) {
+        console.log(`Count changer from ${oldVal} to ${newVal}`)
+        if(newVal % 2 == 0) {
+          this.y = '짝수'
+        } else {
+          this.y = '홀수'
+        }
+      },
+      once : true // 한번만 감시 vue3 watchers
+    }
+  }
+}
+</script>
+<template>
+  <div>
+    <p>Count : {{ count }}</p>
+    <button @click="Increment">Increment</button>
+    <p>Result : {{ y }}</p>
+  </div>
+</template>
+
+⭐component
+Vue 컴포넌트는 UI를 구성하는 독립적인 재사용 가능 블록이다
+재사용, 유지보수, 단순화
+순서 => 제작 -> 등록(지역 OR 전역) -> HTML 태그 형태로 사용할 곳에 삽입
+style scoped => style을 가지고 있는 component만 적용
+
+import 방법
+- 지역 => App.vue에서 작성
+import LocalComponent from '@/components/LocalChild.vue';
+export default {
+  components: {
+    LocalComponent,
+  }
+}
+<LocalComponent />
+
+- 전역 => main.js에서 작성
+import GlobalChild from '@/components/GlobalChild.vue'
+const app = createApp(App)
+app.component('GlobalChild', GlobalChild)
+app.mount('#app')
+
+<GlobalChild />
+
+⭐component life cycle
+생명주기에 사용하는  훅
+=> 생명주기마다 사용할 수 있는  method가 존재하는데 그걸 hook이라고 한다.
+
+beforeCreate => created => beforeMount => (전역 컴포넌트도 동일하게 작용) => mounted
+v-on : beforeUpdate => updated
+v-if : beforeUnmount => unmounted
+
+beforeCreate() { console.log("beforeCreate") },
+created() { console.log("created") },
+beforeMount() { console.log('beforeMount')},
+mounted() {console.log('mounted')},
+beforeUpdate() {console.log('beforeUpdate')},
+updated() {console.log('updated')},
+beforeUnmount() {console.log('beforeUnmount')},
+unmounted() {console.log('unmounted')},
+methods: {
+	counter() { this.cnt++ },
+	discounter() { this.cnt-- }
+}
+
+<h1>Count : {{ cnt }}</h1>
+<GlobalChild v-if="cnt == 2"/>
+<button @click="counter">cnt+</button>
+<button @click="discounter">cnt-</button>
+
+⭐ $refs, ref document.getElementById 랑 비슷
+ref : DOM 요소에 고유한 참조자를 제공하는 특별한 속성
+JS => <input type="text" id="myInput"> -> document.getElementById('myInput').value
+Vue.js =>  <input type="text" ref="myInput"> -> this.$refs.myInput.value
+
+<input type="text" ref="myInput" id="myInput">
+<button @click="logInput">Log</button>
+
+export default {
+  methods:{
+    logInput() {
+      console.log(this.$refs.myInput.value)
+      console.log(document.getElementById('myInput').value)
+    }
+  }
+}
+
+⭐ props 
+부모 컴포넌트에서 자식 컴포넌트로의 데이터 전달 수단
+단방향 데이터 흐름
+=> 상위 속성 업데이트 -> 하위 속성 업데이트 / 반대는 불가능
+=> 즉 부모에서 값을 자식으로 전달할 때 부모에서 값 변경이 가능하지만 자식에서 부모에게 받아온 값 변경 불가능
+
+<자식>
+props: ["name", "age"] => 이용 : <p>Name : {{ name }}</p>
+<부모>
+<ChildCom :name :age/>
+
+⭐ emit
+자식 컴포넌트에서 부모 컴포넌트로 데이터를 전달하거나 Trigger 할 수 있는 방법 제공
+
+순서
+1. 자식 컴포넌트에서 $emit('부모 컴포넌트에 정의된 이벤트') 실행
+2. 부모 컴포넌트에서 이벤트 수신
+3. 연결된 메소드 실행
+
+<자식>
+  <button @click="$emit('createPost')">부모 이벤트 호출</button>  
+<부모>
+  <LocalChild @create-post="callFunction" />
+
+[App.vue]
+export default {
+  data() {
+    return { c: 0 }
+  },
+  components: { LocalChild },
+  methods: {
+    callFunction(var1) {
+      console.log('자식 컴포넌트 이벤트 수신 ' + var1)
+      this.c = var1
+    }
+  }
+}
+</script>
+
+<template>
+  <h1>부모 컴포넌트 입니다. ({{ c }})</h1>
+  <LocalChild @create-post="callFunction" />
+</template>
+
+[Child]
+<script>
+export default {
+	data() {
+		return { c: 5 }
+	}
+}
+</script>
+
+<template>
+	<div>
+		나는 Child component 입니다. ({{ c }})
+		<input type="text" ref="myInput" v-model="c">
+		<button @click="$emit('createPost', c)">부모 이벤트 호출</button>
+	</div>
+</template>
+
+⭐데이터의 효과적인 전달, provide 와 inject
+props의 단점을 개선하기 위해서 등장
+- 필요없는 중간 단계의 컴포넌트에서도 props를 이용해서 계속 자식에게 전댈해줘야 하는 번거러움 발생
+- 만약 이렇게 자손 컴포넌트가 100개가 있다면, 이러한 props를 100번 반복해야 하는 문제가 발생
+
+-> 처음 값을 전달하는 부모 컴포넌트에서 provide에 정의를 해주고 
+-> 최종적으로 그 변수나 함수를 사용하는 자손 컴포넌트에서 inject로 받아서 사용
+
+[App.vue]
+provide() { return { gift: this.gift, } }
+
+[GrandSon]
+inject: ["gift"]
+
+
+
+
+⭐
+
+
+⭐
+
+
+
+⭐
+
+
+
+⭐
