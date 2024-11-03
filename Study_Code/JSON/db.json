@@ -1,0 +1,14 @@
+{
+	"member": [
+		{
+			"id" : 1,
+			"name" : "홍길동",
+			"email" : "aaa@gmail.com"
+		},
+		{
+			"id" : 2,
+			"name" : "전우치",
+			"email" : "bbb@gmail.com"
+		}
+	]
+}
